@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/users/**").hasAnyAuthority("MERCHANT", "STAFF")
                         .requestMatchers("/products/**").hasAnyAuthority("MERCHANT", "STAFF")
                         .requestMatchers("/admin/**").hasAuthority("STAFF")
                         .anyRequest().authenticated()

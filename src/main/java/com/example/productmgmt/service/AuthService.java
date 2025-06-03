@@ -16,7 +16,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
-
     private final UserDetailsService userDetailsService;
 
     public String authenticate(String username, String password) {
@@ -25,7 +24,6 @@ public class AuthService {
         );
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return jwtUtil.generateToken(userDetails);
+        return jwtUtil.generateAccessToken(userDetails);
     }
-
 }

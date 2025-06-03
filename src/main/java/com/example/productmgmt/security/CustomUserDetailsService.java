@@ -34,6 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         System.out.println("使用者密碼：" + user.getPassword());
         System.out.println("嘗試登入的使用者：" + username);
+        System.out.println("使用者的權限：" + user.getRoles());
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

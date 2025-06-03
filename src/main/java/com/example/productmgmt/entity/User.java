@@ -19,7 +19,7 @@ public class User {
 
     private String password;
 
-    private Status status;
+    private UserStatus status;
 
     private LocalDateTime createdAt;
 

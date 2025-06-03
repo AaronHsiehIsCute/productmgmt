@@ -17,7 +17,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('STAFF', 'MERCHANT')")
+    @PreAuthorize("hasAnyAuthority('STAFF', 'MERCHANT')") //可以移除, SecurityConfig已經有寫，這裡是為了將來細粒度權限控制方便使用
     public void createProduct(@RequestBody ProductRequest request) {
         productService.createProduct(request);
     }
@@ -41,6 +41,4 @@ public class ProductController {
         if (offset < 0) offset = 0;
         return productService.searchProducts(id, name, sku, offset, size);
     }
-
-
 }
