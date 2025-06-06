@@ -2,6 +2,10 @@ package com.example.productmgmt.config;
 
 import com.example.productmgmt.security.CustomUserDetailsService;
 import com.example.productmgmt.security.JwtAuthenticationFilter;
+import com.example.productmgmt.security.handler.CustomOAuth2SuccessHandler;
+import com.example.productmgmt.security.oauth.CustomOAuth2UserService;
+import com.example.productmgmt.service.UserService;
+import com.example.productmgmt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,23 +29,37 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
-                .httpBasic(httpBasic -> httpBasic.disable())
+                .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/**").permitAll()
                         .requestMatchers("/api/users/**").hasAnyAuthority("MERCHANT", "STAFF")
                         .requestMatchers("/products/**").hasAnyAuthority("MERCHANT", "STAFF")
                         .requestMatchers("/admin/**").hasAuthority("STAFF")
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .successHandler(customOAuth2SuccessHandler(null, null))
+                )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CustomOAuth2SuccessHandler customOAuth2SuccessHandler(UserService userService, JwtService jwtService) {
+        return new CustomOAuth2SuccessHandler(userService, jwtService);
     }
 
     @Bean
