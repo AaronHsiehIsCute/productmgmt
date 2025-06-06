@@ -50,4 +50,13 @@ public class ProductService {
         return result;
     }
 
+
+    public List<Product> getAllProductByUser(Long userId){
+        List<Product> result = productMapper.getAllProductByUser(userId);
+        if (result == null || result.isEmpty()) {
+            throw new ProductNotFoundException("查無符合條件的產品");
+        }
+        return result;
+    }
+
 }

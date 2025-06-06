@@ -41,4 +41,10 @@ public class ProductController {
         if (offset < 0) offset = 0;
         return productService.searchProducts(id, name, sku, offset, size);
     }
+
+    @GetMapping("/users/{userId}/products")
+    @PreAuthorize("hasAnyAuthority('STAFF')")
+    public List<Product> getAllProductByUser(@PathVariable("userId") Long userId) {
+        return productService.getAllProductByUser(userId);
+    }
 }

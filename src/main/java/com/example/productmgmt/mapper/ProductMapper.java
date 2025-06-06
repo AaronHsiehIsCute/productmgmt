@@ -27,4 +27,6 @@ public interface ProductMapper {
             @Param("limit") int limit
     );
 
+    @Select("SELECT * FROM products WHERE created_by = #{userId}")
+    List<Product> getAllProductByUser(@Param("userId") Long userId);
 }

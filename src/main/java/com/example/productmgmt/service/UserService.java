@@ -2,14 +2,17 @@
 package com.example.productmgmt.service;
 
 import com.example.productmgmt.dto.CreateUserRequest;
+import com.example.productmgmt.entity.Product;
 import com.example.productmgmt.entity.User;
 import com.example.productmgmt.entity.UserStatus;
+import com.example.productmgmt.exception.ProductNotFoundException;
 import com.example.productmgmt.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,4 +36,5 @@ public class UserService {
 
         userMapper.insertUser(user);
     }
+
 }
