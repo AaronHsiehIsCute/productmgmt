@@ -34,24 +34,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 關閉預設保護機制，改由 JWT 控制權限
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
+
+                // 定義路由授權規則
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers("/api/users/**").hasAnyAuthority("MERCHANT", "STAFF")
-                        .requestMatchers("/products/**").hasAnyAuthority("MERCHANT", "STAFF")
+                        // 開放登入、註冊、OAuth2 流程與 Swagger 文件
+                        .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                        // 權限路由：根據角色控制資源存取
+                        .requestMatchers("/api/users/**", "/products/**").hasAnyAuthority("MERCHANT", "STAFF")
                         .requestMatchers("/admin/**").hasAuthority("STAFF")
+
+                        // 其他請求需經身份驗證
                         .anyRequest().authenticated()
                 )
+
+                // 設定 OAuth2 成功登入處理與用戶資料服務
                 .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
-                        )
-                        .successHandler(customOAuth2SuccessHandler(null, null))
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(customOAuth2SuccessHandler(null, null)) // JWT 發發發
                 )
+
+                // 使用自定的帳密驗證機制
                 .authenticationProvider(authenticationProvider())
+
+                // 加入 JWT 驗證過濾器
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

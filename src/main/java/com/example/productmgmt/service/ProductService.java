@@ -2,11 +2,12 @@ package com.example.productmgmt.service;
 
 import com.example.productmgmt.dto.ProductRequest;
 import com.example.productmgmt.entity.Product;
+import com.example.productmgmt.entity.User;
 import com.example.productmgmt.mapper.ProductMapper;
 import com.example.productmgmt.exception.ProductNotFoundException;
+import com.example.productmgmt.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,13 +18,16 @@ import java.util.List;
 public class ProductService {
 
     private final ProductMapper productMapper;
+    private final UserMapper userMapper;
 
     public void createProduct(ProductRequest request) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = currentUser.getUsername();
 
-        // 假設你之後會從 DB 查 username 對應的 userId
-        Long userId = 1L; // TODO: 建議你查 UserMapper 裡的 ID
+        User user = userMapper.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("找不到使用者：" + username);
+        }
 
         Product product = Product.builder()
                 .name(request.getName())
@@ -31,7 +35,7 @@ public class ProductService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .stock(request.getStock())
-                .createdBy(userId)
+                .createdBy(user.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
 
