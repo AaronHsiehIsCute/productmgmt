@@ -30,6 +30,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         User user = userService.findOrCreateUserByEmail(email);
         String token = jwtService.generateToken(user);
 
-        response.sendRedirect("http://localhost:3000/login/success?token=" + token);
+        // 將 token 存入 session（或 HttpOnly Cookie 更安全）
+        request.getSession().setAttribute("JWT_TOKEN", token);
+
+        // 導向前端的成功頁面
+        response.sendRedirect("/login/success/" + token);
     }
+
 }

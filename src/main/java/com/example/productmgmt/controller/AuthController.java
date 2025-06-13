@@ -6,6 +6,7 @@ import com.example.productmgmt.service.RefreshTokenService;
 import com.example.productmgmt.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -83,5 +86,15 @@ public class AuthController {
         return ResponseEntity.ok("已成功登出");
     }
 
+    @GetMapping("/token")
+    public ResponseEntity<?> getToken(HttpServletRequest request) {
+        String token = (String) request.getSession().getAttribute("JWT_TOKEN");
 
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "No token found in session"));
+        }
+
+        return ResponseEntity.ok(Map.of("token", token));
+    }
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登入成功</title>
+</head>
+<body>
+<h2>登入成功</h2>
+<p>以下是你的 JWT Token，請複製到 Swagger 測試：</p>
+<pre id="token">載入中...</pre>
+<button onclick="copyToken()">複製</button>
+
+<script>
+    fetch('/auth/token')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('token').textContent = data.token || '無法取得 token';
+        });
+
+    function copyToken() {
+        const tokenText = document.getElementById('token').textContent;
+        navigator.clipboard.writeText(tokenText).then(() => {
+            alert('Token 已複製');
+        });
+    }
+</script>
+</body>
+</html>

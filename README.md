@@ -5,12 +5,13 @@
 ## 技術棧
 
 - Java 17, Spring Boot 3.x
+- 簡易 Thymeleaf 前端 (快速開發)
 - MyBatis + MySQL
 - Spring Security + JWT + OAuth2
 - Redis（快取 Token 與權限資訊）
 - ELK Stack（可觀測性整合）
 - Swagger UI（API 文件）
-- Docker + docker-compose（開發部署環境）
+- Docker + docker-compose（開發部署環境）(待建置)
 
 ## 系統模組
 
